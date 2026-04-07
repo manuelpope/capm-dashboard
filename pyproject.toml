@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "capm"
+version = "1.0.0"
+description = "Financial Metrics Terminal - CAPM Calculator"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src.*"]

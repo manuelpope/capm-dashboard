@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  capm:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./capm.db:/app/capm.db
+      - ./.env:/app/.env
+    environment:
+      - ENV_MODE=production
+    restart: unless-stopped
