@@ -6,8 +6,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./capm.db:/app/capm.db
-      - ./.env:/app/.env
+      - ./data:/app
     environment:
       - ENV_MODE=production
     restart: unless-stopped
