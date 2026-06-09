@@ -28,7 +28,7 @@ async def dashboard(sync_service: SyncService = Depends(get_sync_service)):
 
         tickers = get_default_tickers()
         loop = asyncio.get_event_loop()
-        loop.run_in_executor(None, sync_service.run_sync, tickers)
+        await loop.run_in_executor(None, sync_service.run_sync, tickers)
 
     db = sync_service._repository
     return generate_dashboard(db)
