@@ -6,10 +6,10 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # Copy dependency files
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml ./
 
-# Install dependencies and project
-RUN uv sync --frozen --python /usr/local/bin/python3
+# Install dependencies (without lock file for dev flexibility)
+RUN uv sync --python /usr/local/bin/python3
 
 # Copy source
 COPY . .
