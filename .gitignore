@@ -1,7 +1,9 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 .env
+uv.lock
 *.db
 .ruff_cache/
 .DS_Store

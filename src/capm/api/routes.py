@@ -1,17 +1,13 @@
-from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from typing import Optional
 
-from src.capm.domain.interfaces import IMetricRepository
-from src.capm.domain.repositories import SQLiteMetricRepository
 from src.capm.api.deps import get_db, verify_api_key
-from src.capm.infrastructure.templates import generate_dashboard
-from src.capm.config import settings
 from src.capm.application.sync_service import SyncService, get_default_tickers
-
+from src.capm.config import settings
+from src.capm.domain.interfaces import IMetricRepository
+from src.capm.infrastructure.templates import generate_dashboard
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
@@ -25,7 +21,7 @@ def get_sync_service(repo: IMetricRepository = Depends(get_db)) -> SyncService:
 async def dashboard(sync_service: SyncService = Depends(get_sync_service)):
     if sync_service.needs_sync():
         import asyncio
-
+        print("needs a Sync data ")
         tickers = get_default_tickers()
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, sync_service.run_sync, tickers)
@@ -37,9 +33,9 @@ async def dashboard(sync_service: SyncService = Depends(get_sync_service)):
 @router.post("/sync")
 @limiter.limit("10/minute")
 async def sync_metrics(
-    request: Request,
-    sync_service: SyncService = Depends(get_sync_service),
-    db: IMetricRepository = Depends(get_db),
+        request: Request,
+        sync_service: SyncService = Depends(get_sync_service),
+        db: IMetricRepository = Depends(get_db),
 ):
     verify_api_key(request)
     body = await request.json()
@@ -54,7 +50,7 @@ async def sync_metrics(
 
 @router.get("/api/metrics")
 async def api_metrics(
-    active_only: bool = True, db: IMetricRepository = Depends(get_db)
+        active_only: bool = True, db: IMetricRepository = Depends(get_db)
 ):
     metrics = db.get_all_metrics(active_only=active_only)
     return [
@@ -104,7 +100,7 @@ async def get_metric(ticker: str, db: IMetricRepository = Depends(get_db)):
 @router.delete("/api/metrics/{ticker}")
 @limiter.limit("5/minute")
 async def delete_metric(
-    ticker: str, request: Request, db: IMetricRepository = Depends(get_db)
+        ticker: str, request: Request, db: IMetricRepository = Depends(get_db)
 ):
     verify_api_key(request)
     success = db.delete_metric(ticker)
@@ -116,7 +112,7 @@ async def delete_metric(
 @router.patch("/api/metrics/{ticker}/active")
 @limiter.limit("10/minute")
 async def toggle_ticker_active(
-    ticker: str, request: Request, db: IMetricRepository = Depends(get_db)
+        ticker: str, request: Request, db: IMetricRepository = Depends(get_db)
 ):
     verify_api_key(request)
     body = await request.json()
@@ -131,7 +127,7 @@ async def toggle_ticker_active(
 
 @router.get("/api/tickers")
 async def list_tickers(
-    active_only: bool = True, db: IMetricRepository = Depends(get_db)
+        active_only: bool = True, db: IMetricRepository = Depends(get_db)
 ):
     metrics = db.get_all_metrics(active_only=active_only)
     return [

@@ -1,4 +1,5 @@
-from fastapi import Depends, HTTPException, Request
+from fastapi import Request
+
 from src.capm.domain.interfaces import IMetricRepository
 from src.capm.domain.repositories import SQLiteMetricRepository
 

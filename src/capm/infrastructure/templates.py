@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
+
 from src.capm.domain.repositories import DatabaseManager
-from src.capm.config import settings
 
 
 def _relative_time(dt: datetime) -> str:
@@ -80,6 +80,11 @@ def generate_dashboard(db: DatabaseManager) -> str:
     rf_source = (
         latest.risk_free_source if latest and latest.risk_free_source else "^TNX"
     )
+    data_range = (
+        f"{latest.data_start_date.strftime('%Y-%m-%d')} → {latest.data_end_date.strftime('%Y-%m-%d')}"
+        if latest and latest.data_start_date and latest.data_end_date
+        else "N/A"
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -125,6 +130,7 @@ def generate_dashboard(db: DatabaseManager) -> str:
             <div><span class="label">MARKET:</span> <span class="value">{latest.market_ticker if latest else "N/A"}</span></div>
             <div><span class="label">RISK-FREE:</span> <span class="value">{risk_free_pct} ({rf_source})</span></div>
             <div><span class="label">DATA PERIOD:</span> <span class="value">{period}</span></div>
+            <div><span class="label">DATA RANGE:</span> <span class="value">{data_range}</span></div>
             <div><span class="label">MARKET RETURN:</span> <span class="value">{market_return_pct}</span></div>
             <div><span class="label">LAST UPDATE:</span> <span class="value">{relative_time}</span></div>
         </div>

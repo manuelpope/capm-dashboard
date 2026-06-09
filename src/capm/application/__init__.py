@@ -1,11 +1,11 @@
-from src.capm.application.engine import FinancialEngine
+from src.capm.application.adapters import YahooDataAdapter
 from src.capm.application.beta_models import (
     BetaCalculator,
     OLSBeta,
     GARCHBeta,
     BetaResult,
 )
-from src.capm.application.adapters import YahooDataAdapter
+from src.capm.application.engine import FinancialEngine
 from src.capm.application.sync_service import (
     SyncService,
     needs_sync,

@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
-from scipy import stats
 from arch import arch_model
+from scipy import stats
 
 
 @dataclass
@@ -20,7 +21,7 @@ class BetaCalculator(ABC):
 
     @abstractmethod
     def calculate(
-        self, asset_returns: pd.Series, market_returns: pd.Series
+            self, asset_returns: pd.Series, market_returns: pd.Series
     ) -> BetaResult:
         pass
 
@@ -29,7 +30,7 @@ class OLSBeta(BetaCalculator):
     name: str = "ols"
 
     def calculate(
-        self, asset_returns: pd.Series, market_returns: pd.Series
+            self, asset_returns: pd.Series, market_returns: pd.Series
     ) -> BetaResult:
         aligned = pd.DataFrame(
             {"asset": asset_returns, "market": market_returns}
@@ -39,7 +40,7 @@ class OLSBeta(BetaCalculator):
         )
         return BetaResult(
             beta=round(slope, 4),
-            r_squared=round(r_value**2, 4),
+            r_squared=round(r_value ** 2, 4),
             p_value=round(p_value, 6),
             std_error=round(std_err, 4),
             alpha=round(intercept, 4),
@@ -54,14 +55,14 @@ class GARCHBeta(BetaCalculator):
         self.q = q
 
     def calculate(
-        self, asset_returns: pd.Series, market_returns: pd.Series
+            self, asset_returns: pd.Series, market_returns: pd.Series
     ) -> BetaResult:
         aligned = pd.DataFrame(
             {"asset": asset_returns, "market": market_returns}
         ).dropna()
         ols_result = stats.linregress(aligned["market"], aligned["asset"])
         residuals = aligned["asset"] - (
-            ols_result.slope * aligned["market"] + ols_result.intercept
+                ols_result.slope * aligned["market"] + ols_result.intercept
         )
         market_residuals = aligned["market"] - aligned["market"].mean()
 
@@ -76,7 +77,7 @@ class GARCHBeta(BetaCalculator):
             )
             garch_fit = garch.fit(disp="off")
             conditional_vol = garch_fit.conditional_volatility
-            weights = 1 / (conditional_vol**2 + 1e-6)
+            weights = 1 / (conditional_vol ** 2 + 1e-6)
         except Exception:
             weights = np.ones(len(aligned))
 

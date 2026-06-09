@@ -1,11 +1,12 @@
-import yfinance as yf
-import pandas as pd
-import numpy as np
 from datetime import datetime
 
-from src.capm.config import settings
-from src.capm.application.beta_models import OLSBeta, GARCHBeta, BetaResult
+import numpy as np
+import pandas as pd
+import yfinance as yf
+
 from src.capm.application.adapters import YahooDataAdapter
+from src.capm.application.beta_models import OLSBeta, GARCHBeta
+from src.capm.config import settings
 
 
 def get_beta_calculator():
@@ -35,7 +36,7 @@ class FinancialEngine:
         return 0.0
 
     def download_data(
-        self, tickers: list[str], period: str = "2y"
+            self, tickers: list[str], period: str = "2y"
     ) -> dict[str, pd.DataFrame]:
         data = {}
         all_tickers = list(set(tickers + [self.market_ticker]))
@@ -71,7 +72,7 @@ class FinancialEngine:
 
             market_mean_return = market_returns.mean() * 252
             capm = self.risk_free_rate + beta_result.beta * (
-                market_mean_return - self.risk_free_rate
+                    market_mean_return - self.risk_free_rate
             )
 
             asset_std_daily = asset_returns.std()
@@ -105,6 +106,8 @@ class FinancialEngine:
                     "risk_free_rate": float(self.risk_free_rate),
                     "risk_free_source": self.risk_free_source,
                     "market_return": float(round(market_mean_return, 4)),
+                    "data_start_date": asset_prices.index[0].to_pydatetime(),
+                    "data_end_date": asset_prices.index[-1].to_pydatetime(),
                     "calculated_at": datetime.utcnow(),
                 }
             )

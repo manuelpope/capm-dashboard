@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, create_engine
+
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from src.capm.config import settings
@@ -25,6 +26,8 @@ class Metric(Base):
     risk_free_rate = Column(Float, nullable=False)
     risk_free_source = Column(String, nullable=True)
     market_return = Column(Float, nullable=False)
+    data_start_date = Column(DateTime, nullable=True)
+    data_end_date = Column(DateTime, nullable=True)
     calculated_at = Column(DateTime, default=datetime.utcnow)
     active = Column(Boolean, default=True, nullable=False)
 
@@ -33,7 +36,18 @@ class SQLiteMetricRepository:
     def __init__(self):
         self.engine = create_engine(f"sqlite:///{settings.db_path}", echo=False)
         Base.metadata.create_all(self.engine)
+        self._migrate_if_needed()
         self.Session = sessionmaker(bind=self.engine)
+
+    def _migrate_if_needed(self):
+        from sqlalchemy import inspect
+        inspector = inspect(self.engine)
+        columns = [c["name"] for c in inspector.get_columns("metrics")]
+        if "data_start_date" not in columns:
+            with self.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE metrics ADD COLUMN data_start_date DATETIME"))
+                conn.execute(text("ALTER TABLE metrics ADD COLUMN data_end_date DATETIME"))
+                conn.commit()
 
     def upsert_metrics(self, metrics: list[dict]) -> None:
         with self.Session() as session:

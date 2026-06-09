@@ -20,7 +20,7 @@ src/capm/
 │   └── templates.py     # Dashboard HTML
 └── api/                 # Capa de presentación
     ├── routes.py        # Endpoints
-    └── deps.py         # Dependencies
+    └── deps.py          # Dependencies
 ```
 
 ---
@@ -37,21 +37,15 @@ src/capm/
 | ORM         | SQLAlchemy           |
 | Config      | Pydantic Settings    |
 | Health      | fastapi-health       |
+| Package     | uv                   |
 
 ---
 
 ## Instalación
 
 ```bash
-# Crear entorno virtual
-python3 -m venv venv
-source venv/bin/activate
-
-# Instalar dependencias
-pip install -r requirements.txt
-
-# Instalar en modo editable
-pip install -e .
+# Instalar dependencias con uv
+uv sync
 
 # Configurar variables de entorno
 cp .env.example .env
@@ -63,8 +57,7 @@ cp .env.example .env
 
 ```bash
 # Desarrollo
-source venv/bin/activate
-uvicorn src.capm.main:app --reload --port 8000
+uv run uvicorn src.capm.main:app --reload --port 8000
 
 # Docker
 docker-compose up --build
@@ -187,5 +180,5 @@ docker-compose up --build
 
 ---
 
-**Autor:** Manuel Andrés Tobón Bayona  
+**Autor:** Manuel Andrés Tobón Bayona
 **Estado:** MVP funcional

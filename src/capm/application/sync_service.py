@@ -1,6 +1,7 @@
-import pandas as pd
 from datetime import datetime
 from typing import Optional
+
+import pandas as pd
 
 from src.capm.config import settings
 from src.capm.domain.interfaces import IMetricRepository
